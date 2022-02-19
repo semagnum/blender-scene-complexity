@@ -60,7 +60,7 @@ class SA_OT_RefreshMeshes(bpy.types.Operator):
         for o in all_mesh_objects:
             new_data: MeshObjectCache = context.scene.sa_mesh_cache.add()
             new_data.name = o.name_full
-            new_data.material_count = len({m.material.name_full for m in o.material_slots})
+            new_data.material_count = len({m.material.name_full for m in o.material_slots if m.material is not None})
             try:
                 new_data.faces, new_data.tris, new_data.verts = get_bmesh_data(o, depsgraph)
             except Exception as e:
@@ -68,7 +68,7 @@ class SA_OT_RefreshMeshes(bpy.types.Operator):
 
             new_data.modifier_count = len(o.modifiers)
 
-            uniq_material_names = {m.material.name for m in o.material_slots}
+            uniq_material_names = {m.material.name for m in o.material_slots if m.material is not None}
             for m in uniq_material_names:
                 if m in material_cache_tree:
                     new_data.material_node_count += material_cache_tree[m]
