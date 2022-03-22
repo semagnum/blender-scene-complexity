@@ -66,22 +66,18 @@ properties = [
 
 
 def register():
-    scene = bpy.types.Scene
+    window_manager = bpy.types.WindowManager
 
     for cls in classes:
         bpy.utils.register_class(cls)
 
     for name, prop in properties:
-        setattr(scene, name, prop)
+        setattr(window_manager, name, prop)
 
 
 def unregister():
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)
-
-    scene = bpy.types.Scene
-    for name, _ in properties:
-        delattr(scene, name)
 
 
 if __name__ == '__main__':
