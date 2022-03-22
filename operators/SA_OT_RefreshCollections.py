@@ -53,15 +53,16 @@ class SA_OT_RefreshCollections(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
+        window_manager = context.window_manager
         root_collection = context.view_layer.layer_collection.collection
-        context.scene.sa_collection_cache.clear()
+        window_manager.sa_collection_cache.clear()
 
-        mesh_cache = {o.name: (o.tris, o.verts) for o in context.scene.sa_mesh_cache.values()}
+        mesh_cache = {o.name: (o.tris, o.verts) for o in window_manager.sa_mesh_cache.values()}
 
         instanced_colls = [c.name for c in find_instanced_colls(root_collection)]
 
         for coll in coll_iter(root_collection):
-            new_coll_data: CollectionCache = context.scene.sa_collection_cache.add()
+            new_coll_data: CollectionCache = window_manager.sa_collection_cache.add()
             new_coll_data.name = coll.name
             for o in coll.objects:
                 if o.name in mesh_cache:

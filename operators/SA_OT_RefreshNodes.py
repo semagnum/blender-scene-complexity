@@ -32,8 +32,8 @@ class SA_OT_RefreshNodes(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        scene = context.scene
-        scene.sa_material_cache.clear()
+        window_manager = context.window_manager
+        window_manager.sa_material_cache.clear()
         for material in bpy.data.materials:
             if material.use_nodes:
                 node_tree = material.node_tree
@@ -41,20 +41,20 @@ class SA_OT_RefreshNodes(bpy.types.Operator):
                     total_nodes = {}
                     for output in get_output_nodes(node_tree):
                         total_nodes.update(get_nodes_used(output))
-                    new_material_cache: NodeCache = scene.sa_material_cache.add()
+                    new_material_cache: NodeCache = window_manager.sa_material_cache.add()
                     new_material_cache.name = material.name
                     new_material_cache.nodes_used = len(total_nodes.keys())
                 except Exception as e:
                     print('Adding material to cache failed', material.name, e)
 
-        scene.sa_geometry_cache.clear()
+        window_manager.sa_geometry_cache.clear()
         geo_node_trees = (node_tree for node_tree in bpy.data.node_groups if node_tree.bl_idname == 'GeometryNodeTree')
         for geometry_node_tree in geo_node_trees:
             try:
                 total_nodes = {}
                 for output in get_output_nodes(geometry_node_tree):
                     total_nodes.update(get_nodes_used(output))
-                new_data: NodeCache = scene.sa_geometry_cache.add()
+                new_data: NodeCache = window_manager.sa_geometry_cache.add()
                 new_data.name = geometry_node_tree.name
                 new_data.nodes_used = len(total_nodes.keys())
             except Exception as e:

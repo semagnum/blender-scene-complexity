@@ -55,7 +55,7 @@ class SA_UL_MeshComplexity(bpy.types.UIList):
             else:
                 flt_flags = [self.bitflag_filter_item] * len(all_mesh_objects)
 
-        sort_value = context.scene.mesh_cache_sort_value
+        sort_value = context.window_manager.mesh_cache_sort_value
         _sort = [(idx, getattr(it, sort_value, '')) for idx, it in enumerate(all_mesh_objects)]
         if sort_value == 'name':
             flt_neworder = helper_funcs.sort_items_helper(_sort, lambda e: e[1].lower())
@@ -104,7 +104,7 @@ class SA_UL_CollectionComplexity(bpy.types.UIList):
             else:
                 flt_flags = [self.bitflag_filter_item] * len(all_collections)
 
-        sort_value = context.scene.collection_cache_sort_value
+        sort_value = context.window_manager.collection_cache_sort_value
         _sort = [(idx, getattr(it, sort_value, '')) for idx, it in enumerate(all_collections)]
         if sort_value == 'name':
             flt_neworder = helper_funcs.sort_items_helper(_sort, lambda e: e[1].lower())
@@ -137,7 +137,7 @@ class SA_UL_MaterialNodeComplexity(bpy.types.UIList):
             flt_flags = [self.bitflag_filter_item] * len(all_nodes)
 
         if len(all_nodes) > 0:
-            sort_value = context.scene.material_cache_sort_value
+            sort_value = context.window_manager.material_cache_sort_value
             _sort = [(idx, getattr(it, sort_value, '')) for idx, it in enumerate(all_nodes)]
             if sort_value == 'name':
                 flt_neworder = helper_funcs.sort_items_helper(_sort, lambda e: e[1].lower())
@@ -170,7 +170,7 @@ class SA_UL_GeometryNodeComplexity(bpy.types.UIList):
             flt_flags = [self.bitflag_filter_item] * len(all_nodes)
 
         if len(all_nodes) > 0:
-            sort_value = context.scene.geometry_cache_sort_value
+            sort_value = context.window_manager.geometry_cache_sort_value
             _sort = [(idx, getattr(it, sort_value, '')) for idx, it in enumerate(all_nodes)]
             if sort_value == 'name':
                 flt_neworder = helper_funcs.sort_items_helper(_sort, lambda e: e[1].lower())

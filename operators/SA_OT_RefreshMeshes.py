@@ -51,14 +51,15 @@ class SA_OT_RefreshMeshes(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        context.scene.sa_mesh_cache.clear()
+        window_manager = context.window_manager
+        window_manager.sa_mesh_cache.clear()
         root_collection = context.view_layer.layer_collection.collection
         all_mesh_objects = {o for o in root_collection.all_objects if o.type == 'MESH'}
-        material_cache_tree = {m.name: m.nodes_used for m in context.scene.sa_material_cache}
+        material_cache_tree = {m.name: m.nodes_used for m in window_manager.sa_material_cache}
 
         depsgraph = context.evaluated_depsgraph_get()
         for o in all_mesh_objects:
-            new_data: MeshObjectCache = context.scene.sa_mesh_cache.add()
+            new_data: MeshObjectCache = window_manager.sa_mesh_cache.add()
             new_data.name = o.name_full
             new_data.material_count = len({m.material.name_full for m in o.material_slots if m.material is not None})
             try:

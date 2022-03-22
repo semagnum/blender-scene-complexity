@@ -15,7 +15,7 @@ class SA_PT_ComplexityTable(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene
+        wm = context.window_manager
 
         col = layout.column(align=True)
         col.operator(SA_OT_RefreshAll.bl_idname, icon='FILE_REFRESH')
@@ -25,20 +25,20 @@ class SA_PT_ComplexityTable(bpy.types.Panel):
         row.operator(SA_OT_RefreshNodes.bl_idname, icon='NODETREE')
 
         layout.label(text='Mesh objects')
-        layout.prop(scene, 'mesh_cache_sort_value', expand=True)
-        layout.template_list('SA_UL_MeshComplexity', '', scene, 'sa_mesh_cache', scene, 'sa_mesh_active', columns=6)
+        layout.prop(wm, 'mesh_cache_sort_value', expand=True)
+        layout.template_list('SA_UL_MeshComplexity', '', wm, 'sa_mesh_cache', wm, 'sa_mesh_active', columns=6)
 
         layout.label(text='Collections')
-        layout.prop(scene, 'collection_cache_sort_value', expand=True)
-        layout.template_list('SA_UL_CollectionComplexity', '', scene, 'sa_collection_cache', scene,
+        layout.prop(wm, 'collection_cache_sort_value', expand=True)
+        layout.template_list('SA_UL_CollectionComplexity', '', wm, 'sa_collection_cache', wm,
                              'sa_collection_active', columns=4)
 
         layout.label(text='Shader nodes')
-        layout.prop(scene, 'material_cache_sort_value', expand=True)
-        layout.template_list('SA_UL_MaterialNodeComplexity', '', scene, 'sa_material_cache',
-                             scene, 'sa_material_active', columns=2)
+        layout.prop(wm, 'material_cache_sort_value', expand=True)
+        layout.template_list('SA_UL_MaterialNodeComplexity', '', wm, 'sa_material_cache',
+                             wm, 'sa_material_active', columns=2)
 
         layout.label(text='Geometry nodes')
-        layout.prop(scene, 'geometry_cache_sort_value', expand=True)
-        layout.template_list('SA_UL_GeometryNodeComplexity', '', scene, 'sa_geometry_cache',
-                             scene, 'sa_geometry_active', columns=2)
+        layout.prop(wm, 'geometry_cache_sort_value', expand=True)
+        layout.template_list('SA_UL_GeometryNodeComplexity', '', wm, 'sa_geometry_cache',
+                             wm, 'sa_geometry_active', columns=2)
