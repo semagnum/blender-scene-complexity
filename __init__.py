@@ -44,9 +44,9 @@ properties = [
         ('name', 'Name', 'Mesh object name'),
         ('tris', 'Triangles', 'Calculated triangle count'),
         ('verts', 'Vertices', 'Vertex count'),
+        ('modifier_count', 'Modifier Count', 'number of modifiers on meshobject'),
         ('material_count', 'Materials', 'Number of materials on object'),
         ('material_node_count', 'nodes', 'total number of shader nodes used on object'),
-        ('modifier_count', 'Modifier Count', 'number of modifiers on meshobject'),
     ])),
     ('collection_cache_sort_value', bpy.props.EnumProperty(items=[
         ('name', 'Name', 'Collection name'),
