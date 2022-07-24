@@ -30,6 +30,9 @@ operators_panels = [SA_OT_RefreshMeshes, SA_OT_RefreshCollections, SA_OT_Refresh
 classes = ui_lists + prop_groups + operators_panels
 
 properties = [
+    ('sa_apply_modifiers', bpy.props.BoolProperty(name='Apply modifiers',
+                                                  description='Will apply modifiers for mesh statistics',
+                                                  default=True)),
     ('sa_mesh_cache', bpy.props.CollectionProperty(type=MeshObjectCache, options={'SKIP_SAVE'})),
     ('sa_collection_cache', bpy.props.CollectionProperty(type=CollectionCache, options={'SKIP_SAVE'})),
     ('sa_material_cache', bpy.props.CollectionProperty(type=NodeCache, options={'SKIP_SAVE'})),

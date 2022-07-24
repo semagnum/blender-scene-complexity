@@ -24,6 +24,8 @@ class SA_PT_ComplexityTable(bpy.types.Panel):
         row.operator(SA_OT_RefreshCollections.bl_idname, icon='OUTLINER_COLLECTION')
         row.operator(SA_OT_RefreshNodes.bl_idname, icon='NODETREE')
 
+        layout.prop(wm, 'sa_apply_modifiers', icon='MODIFIER')
+
         layout.label(text='Mesh objects')
         layout.prop(wm, 'mesh_cache_sort_value', expand=True)
         layout.template_list('SA_UL_MeshComplexity', '', wm, 'sa_mesh_cache', wm, 'sa_mesh_active', columns=6)

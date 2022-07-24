@@ -22,24 +22,30 @@ def get_parent_ancestors(obj):
     return parents
 
 
-def get_bmesh_data(obj, depsgraph):
+def get_bmesh_data(obj, depsgraph, use_bmesh=True):
     """
     Gets bmesh stats for object
     :param obj: bpy.types.Object
     :param depsgraph: current scene depsgraph
+    :param use_bmesh: whether to use evaluated bmesh or simplified stats
     :return: faces, tris, verts
     """
-    blender_mesh = obj.evaluated_get(depsgraph).to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
+    if not use_bmesh:
+        face_count = len(obj.data.polygons)
+        verts_count = len(obj.data.vertices)
+        tris_count = sum(len(face.vertices) - 2 for face in obj.data.polygons)
+    else:
+        blender_mesh = obj.evaluated_get(depsgraph).to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
 
-    bm = bmesh.new()
-    bm.from_mesh(blender_mesh)
-    bm.faces.ensure_lookup_table()
+        bm = bmesh.new()
+        bm.from_mesh(blender_mesh)
+        bm.faces.ensure_lookup_table()
 
-    face_count = len(bm.faces)
-    tris_count = len(bm.calc_loop_triangles())
-    verts_count = len(bm.verts)
+        face_count = len(bm.faces)
+        tris_count = len(bm.calc_loop_triangles())
+        verts_count = len(bm.verts)
 
-    bm.free()
+        bm.free()
 
     return face_count, tris_count, verts_count
 
@@ -58,12 +64,13 @@ class SA_OT_RefreshMeshes(bpy.types.Operator):
         material_cache_tree = {m.name: m.nodes_used for m in window_manager.sa_material_cache}
 
         depsgraph = context.evaluated_depsgraph_get()
+        use_bmesh = window_manager.sa_apply_modifiers
         for o in all_mesh_objects:
             new_data: MeshObjectCache = window_manager.sa_mesh_cache.add()
             new_data.name = o.name_full
             new_data.material_count = len({m.material.name_full for m in o.material_slots if m.material is not None})
             try:
-                new_data.faces, new_data.tris, new_data.verts = get_bmesh_data(o, depsgraph)
+                new_data.faces, new_data.tris, new_data.verts = get_bmesh_data(o, depsgraph, use_bmesh)
             except Exception as e:
                 print('Uninitialized data for ' + new_data.name, e)
 
