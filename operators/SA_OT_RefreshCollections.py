@@ -1,10 +1,12 @@
+from typing import Iterator
+
 import bpy
 from ..model.CacheGroups import CollectionCache
 
 
-def coll_iter(curr_coll):
-    """
-    Iterate through hierarchy of collections
+def coll_iter(curr_coll: bpy.types.Collection) -> Iterator[bpy.types.Collection]:
+    """Iterate through hierarchy of collections.
+
     :param curr_coll: current collection
     :return: generator of collections
     """
@@ -13,18 +15,18 @@ def coll_iter(curr_coll):
         yield from coll_iter(child)
 
 
-def find_coll_instancers(curr_coll):
-    """
-    Find all objects that instance collections
+def find_coll_instancers(curr_coll: bpy.types.Collection) -> Iterator[bpy.types.Collection]:
+    """Find all objects that instance collections.
+
     :param curr_coll: current collection
     :return: generator of objects that instance collections
     """
     return (obj for obj in curr_coll.all_objects if obj.is_instancer and obj.instance_type == 'COLLECTION')
 
 
-def find_instanced_colls(curr_coll):
-    """
-    Iterate over collections instanced by objects
+def find_instanced_colls(curr_coll: bpy.types.Collection) -> Iterator[bpy.types.Collection]:
+    """Iterate over collections instanced by objects.
+
     :param curr_coll: current collection
     :return: generator of collections that are instanced by objects
     """
@@ -32,9 +34,9 @@ def find_instanced_colls(curr_coll):
 
 
 # example: find_instanced_colls(context.view_layer.layer_collection)
-def find_instanced_objs_in_colls(curr_coll):
-    """
-    Iterate over objects that are in collections instanced by objects
+def find_instanced_objs_in_colls(curr_coll: bpy.types.Collection) -> Iterator[bpy.types.Collection]:
+    """Iterate over objects that are in collections instanced by objects.
+
     :param curr_coll: current collection
     :return: generator of objects in collections instanced by objects
     """
@@ -47,6 +49,7 @@ def find_instanced_objs_in_colls(curr_coll):
 
 
 class SA_OT_RefreshCollections(bpy.types.Operator):
+    """Refreshes the collection cache."""
     bl_idname = 'scene_analyzer.refresh_collections'
     bl_label = 'Refresh collections'
     bl_description = 'Refresh cache of collection stats'

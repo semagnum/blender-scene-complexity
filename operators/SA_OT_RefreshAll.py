@@ -2,6 +2,7 @@ import bpy
 
 
 class SA_OT_RefreshAll(bpy.types.Operator):
+    """Refreshes all node, mesh, and collection caches."""
     bl_idname = 'scene_analyzer.refresh_all'
     bl_label = 'Refresh all'
     bl_description = 'Refresh all caches'

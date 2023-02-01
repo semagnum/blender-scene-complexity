@@ -5,16 +5,19 @@ from .formatting_util import format_num
 
 
 class SA_UL_MeshComplexity(bpy.types.UIList):
+    """UI list to display all meshes in a scene and their complexity."""
     is_visible: bpy.props.BoolProperty(
         name="Visible Only",
         description="Only show visible objects",
         default=True
     )
+    """Toggle to only show visible objects."""
     is_selected: bpy.props.BoolProperty(
         name="Selected Only",
         description="Only show visible objects",
         default=False
     )
+    """Toggle to only show selected object."""
 
     def draw_item(self, context, layout, data, mesh_obj_cache: MeshObjectCache, icon, active_data, active_propname,
                   index):
@@ -66,11 +69,13 @@ class SA_UL_MeshComplexity(bpy.types.UIList):
 
 
 class SA_UL_CollectionComplexity(bpy.types.UIList):
+    """UI list to display all collections in a scene and their complexity."""
     is_instanced: bpy.props.BoolProperty(
         name='Instanced Only',
         description='Only show collections instanced by other objects',
         default=False
     )
+    """Toggle to only show instanced collections."""
 
     def draw_item(self, context, layout, data, coll_cache: CollectionCache, icon, active_data, active_propname,
                   index):
@@ -115,6 +120,7 @@ class SA_UL_CollectionComplexity(bpy.types.UIList):
 
 
 class SA_UL_MaterialNodeComplexity(bpy.types.UIList):
+    """UI list to display all material nodes in a Blender file and their complexity."""
 
     def draw_item(self, context, layout, data, node_cache: NodeCache, icon, active_data, active_propname,
                   index):
@@ -148,6 +154,7 @@ class SA_UL_MaterialNodeComplexity(bpy.types.UIList):
 
 
 class SA_UL_GeometryNodeComplexity(bpy.types.UIList):
+    """UI list to display all geometry nodes in a Blender file and their complexity."""
 
     def draw_item(self, context, layout, data, node_cache: NodeCache, icon, active_data, active_propname,
                   index):

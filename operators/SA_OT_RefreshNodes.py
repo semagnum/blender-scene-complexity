@@ -1,11 +1,18 @@
+from typing import Iterator
+
 import bpy
 
-from ..model.CacheGroups import NodeCache
+from ..model import NodeCache
 
 NODE_PATTERNS_TO_SKIP = {'Reroute', 'GroupInput', 'GroupOutput', 'NodeOutput'}
+"""Node types that can be skipped in calculations."""
 
 
-def get_nodes_used(curr_node):
+def get_nodes_used(curr_node: bpy.types.Node) -> dict[str, bpy.types.Node]:
+    """Get all nodes currently used within a node tree.
+
+    :param curr_node: node to start with.
+    """
     curr_dict = {}
     if not curr_node.mute:
         if hasattr(curr_node, 'node_tree'):
@@ -21,11 +28,13 @@ def get_nodes_used(curr_node):
     return curr_dict
 
 
-def get_output_nodes(node_tree):
+def get_output_nodes(node_tree: bpy.types.NodeTree) -> Iterator[bpy.types.Node]:
+    """Returns all output nodes in a node tree."""
     return (node for node in node_tree.nodes if 'Output' in node.bl_idname)
 
 
 class SA_OT_RefreshNodes(bpy.types.Operator):
+    """Refreshes all node caches."""
     bl_idname = 'scene_analyzer.refresh_nodes'
     bl_label = 'Refresh nodes'
     bl_description = 'Refresh cache of node stats'

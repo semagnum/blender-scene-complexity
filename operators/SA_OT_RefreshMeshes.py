@@ -1,19 +1,24 @@
+from typing import Iterator
+
 import bpy
 import bmesh
 
 from ..model.CacheGroups import MeshObjectCache
 
 
-def find_vert_face_instancers(curr_coll):
-    """
-    Find all objects that face or vert instancers
+def find_vert_face_instancers(curr_coll: bpy.types.Collection) -> Iterator[bpy.types.Collection]:
+    """Find all objects that face or vert instancers.
+
     :param curr_coll: current collection
-    :return: generator of objects that instance collections
     """
     return (obj for obj in curr_coll.all_objects if obj.is_instancer and obj.instance_type in {'VERTS', 'FACES'})
 
 
-def get_parent_ancestors(obj):
+def get_parent_ancestors(obj: bpy.types.Object) -> list[bpy.types.Object]:
+    """Returns all ancestors of the current object.
+
+    :param obj: Blender object
+    """
     curr_obj = obj
     parents = []
     while curr_obj.parent is not None:
@@ -22,13 +27,13 @@ def get_parent_ancestors(obj):
     return parents
 
 
-def get_bmesh_data(obj, depsgraph, use_bmesh=True):
-    """
-    Gets bmesh stats for object
-    :param obj: bpy.types.Object
-    :param depsgraph: current scene depsgraph
-    :param use_bmesh: whether to use evaluated bmesh or simplified stats
-    :return: faces, tris, verts
+def get_bmesh_data(obj: bpy.types.Object, depsgraph: bpy.types.Depsgraph, use_bmesh: bool = True) -> tuple[int]:
+    """Gets bmesh stats for object.
+
+    :param obj: mesh object
+    :param depsgraph: current scene depsgraph.
+    :param use_bmesh: whether to use evaluated bmesh or simplified stats.
+    :return: Tuple containing the evaluated ``(face_count, triangle_count, vertex_count)`` of the mesh object.
     """
     if not use_bmesh:
         face_count = len(obj.data.polygons)
@@ -51,6 +56,7 @@ def get_bmesh_data(obj, depsgraph, use_bmesh=True):
 
 
 class SA_OT_RefreshMeshes(bpy.types.Operator):
+    """Refreshes the mesh cache."""
     bl_idname = 'scene_analyzer.refresh_meshes'
     bl_label = 'Refresh mesh objects'
     bl_description = 'Refresh cache of mesh stats'

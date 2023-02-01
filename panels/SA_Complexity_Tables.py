@@ -7,6 +7,7 @@ from ..operators.SA_OT_RefreshNodes import SA_OT_RefreshNodes
 
 
 class SA_PT_ComplexityTable(bpy.types.Panel):
+    "Scene properties panel to show scene and file complexity."
     bl_label = 'Scene Analyzer'
     bl_category = 'Scene Analyzer'
     bl_space_type = 'PROPERTIES'
