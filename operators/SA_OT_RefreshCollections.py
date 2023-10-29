@@ -19,7 +19,7 @@ import bpy
 from ..model.CacheGroups import CollectionCache
 
 
-def coll_iter(curr_coll: bpy.types.Collection) -> Iterator[bpy.types.Collection]:
+def coll_iter(curr_coll: bpy.types.LayerCollection) -> Iterator[bpy.types.LayerCollection]:
     """Iterate through hierarchy of collections.
 
     :param curr_coll: current collection
@@ -72,21 +72,22 @@ class SA_OT_RefreshCollections(bpy.types.Operator):
 
     def execute(self, context):
         window_manager = context.window_manager
-        root_collection = context.view_layer.layer_collection.collection
+        root_collection = context.view_layer.layer_collection
         window_manager.sa_collection_cache.clear()
 
         mesh_cache = {o.name: (o.tris, o.verts) for o in window_manager.sa_mesh_cache.values()}
 
-        instanced_colls = [c.name for c in find_instanced_colls(root_collection)]
+        instanced_colls = [c.name for c in find_instanced_colls(root_collection.collection)]
 
         for coll in coll_iter(root_collection):
             new_coll_data: CollectionCache = window_manager.sa_collection_cache.add()
-            new_coll_data.name = coll.name
-            for o in coll.objects:
+            new_coll_data.name = coll.collection.name
+            new_coll_data.is_visible = coll.is_visible
+            for o in coll.collection.objects:
                 if o.name in mesh_cache:
                     tris, verts = mesh_cache[o.name]
                     new_coll_data.total_tris += tris
                     new_coll_data.total_verts += verts
-            new_coll_data.instance_count = len([c for c in instanced_colls if c == coll.name])
+            new_coll_data.instance_count = len([c for c in instanced_colls if c == coll.collection.name])
 
         return {'FINISHED'}

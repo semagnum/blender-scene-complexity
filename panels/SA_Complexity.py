@@ -85,6 +85,11 @@ class SA_UL_MeshComplexity(bpy.types.UIList):
 
 class SA_UL_CollectionComplexity(bpy.types.UIList):
     """UI list to display all collections in a scene and their complexity."""
+    is_visible: bpy.props.BoolProperty(
+        name='Visible Only',
+        description='Only show visible collections',
+        default=True
+    )
     is_instanced: bpy.props.BoolProperty(
         name='Instanced Only',
         description='Only show collections instanced by other objects',
@@ -103,6 +108,7 @@ class SA_UL_CollectionComplexity(bpy.types.UIList):
     def draw_filter(self, context, layout):
         row = layout.row()
         row.prop(self, 'filter_name', text='')
+        row.prop(self, 'is_visible', text='', icon='HIDE_OFF')
         row.prop(self, 'is_instanced', text='', icon='OUTLINER_OB_GROUP_INSTANCE')
 
     def filter_items(self, context, data, propname):
@@ -117,12 +123,14 @@ class SA_UL_CollectionComplexity(bpy.types.UIList):
         if self.filter_name:
             flt_flags = helper_funcs.filter_items_by_name(self.filter_name, self.bitflag_filter_item,
                                                           all_collections, 'name')
-        if not flt_flags:
-            if self.is_instanced:
-                flt_flags = [0 if coll.instance_count == 0 else self.bitflag_filter_item for idx, coll in
-                             enumerate(all_collections)]
-            else:
-                flt_flags = [self.bitflag_filter_item] * len(all_collections)
+        else:
+            flt_flags = [self.bitflag_filter_item] * len(all_collections)
+
+        flt_flags = [
+            0 if (self.is_instanced and coll.instance_count == 0) or (self.is_visible and not coll.is_visible)
+            else flt_flags[idx]
+            for idx, coll in enumerate(all_collections)
+        ]
 
         sort_value = context.window_manager.collection_cache_sort_value
         _sort = [(idx, getattr(it, sort_value, '')) for idx, it in enumerate(all_collections)]

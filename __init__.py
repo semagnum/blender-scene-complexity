@@ -23,7 +23,7 @@ from . import panels
 bl_info = {
     "name": 'Scene Complexity',
     "author": 'Spencer Magnusson',
-    "version": (0, 0, 2),
+    "version": (0, 0, 3),
     "blender": (2, 93, 0),
     "description": 'Analyze various aspects of scene to determine complexity',
     "location": 'Scene',

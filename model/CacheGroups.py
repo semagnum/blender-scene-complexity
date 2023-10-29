@@ -38,6 +38,8 @@ class CollectionCache(bpy.types.PropertyGroup):
 
     instance_count: bpy.props.IntProperty(default=0)  # all collection instances (recursive)
 
+    is_visible: bpy.props.BoolProperty(default=True)
+
 
 class NodeCache(bpy.types.PropertyGroup):
     """Cache of node trees and their sizes. Used for both material and geometry nodes."""
