@@ -20,7 +20,9 @@ import bpy
 from ..model import NodeCache
 
 NODE_PATTERNS_TO_SKIP = {'Reroute', 'GroupInput', 'GroupOutput', 'NodeOutput'}
-"""Node types that can be skipped in calculations."""
+"""Node types that can be skipped in calculations.
+Should only be non-operational nodes or otherwise not actually affecting the complexity or performance of a node tree.
+"""
 
 
 def get_nodes_used(curr_node: bpy.types.Node) -> dict[str, bpy.types.Node]:
