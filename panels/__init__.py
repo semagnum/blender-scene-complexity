@@ -36,7 +36,7 @@ _register_props = (('sa_mesh_active', bpy.props.IntProperty(default=0, options={
                        ('name', 'Name', 'Mesh object name'),
                        ('tris', 'Triangles', 'Calculated triangle count'),
                        ('verts', 'Vertices', 'Vertex count'),
-                       ('modifier_count', 'Modifier Count', 'number of modifiers on meshobject'),
+                       ('modifier_count', 'Modifiers', 'number of modifiers on meshobject'),
                        ('material_count', 'Materials', 'Number of materials on object'),
                        ('material_node_count', 'Nodes', 'total number of shader nodes used on object'),
                    ])),
