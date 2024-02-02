@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Spencer Magnusson
+# Copyright (C) 2024 Spencer Magnusson
 # semagnum@gmail.com
 # Created by Spencer Magnusson
 #     This program is free software: you can redistribute it and/or modify
@@ -149,6 +149,7 @@ class SA_UL_MaterialNodeComplexity(bpy.types.UIList):
                   index):
         layout.label(text=node_cache.name)
         layout.label(text=format_num(node_cache.nodes_used), icon='NODETREE')
+        layout.label(text=format_num(node_cache.max_texture_size, decimal_places=None), icon='TEXTURE_DATA')
 
     def filter_items(self, context, data, propname):
         all_nodes = getattr(data, propname)
