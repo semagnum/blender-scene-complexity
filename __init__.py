@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Spencer Magnusson
+# Copyright (C) 2024 Spencer Magnusson
 # semagnum@gmail.com
 # Created by Spencer Magnusson
 #     This program is free software: you can redistribute it and/or modify
@@ -16,19 +16,19 @@
 import bpy
 
 from .register_util import register_all, unregister_all
-from . import model
-from . import operators
-from . import panels
+from . import model, operators, panels
 
 bl_info = {
     "name": 'Scene Complexity',
     "author": 'Spencer Magnusson',
-    "version": (0, 0, 3),
+    "version": (0, 0, 4),
     "blender": (2, 93, 0),
     "description": 'Analyze various aspects of scene to determine complexity',
-    "location": 'Scene',
+    "location": 'Properties -> Scene',
     "support": 'COMMUNITY',
-    "category_icon": 'Scene'
+    'category': '3D View',
+    "category_icon": 'Scene',
+    'tracker_url': 'https://github.com/semagnum/blender-scene-complexity/issues',
 }
 
 properties = [

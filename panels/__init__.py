@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Spencer Magnusson
+# Copyright (C) 2024 Spencer Magnusson
 # semagnum@gmail.com
 # Created by Spencer Magnusson
 #     This program is free software: you can redistribute it and/or modify
@@ -49,6 +49,7 @@ _register_props = (('sa_mesh_active', bpy.props.IntProperty(default=0, options={
                    ('material_cache_sort_value', bpy.props.EnumProperty(items=[
                        ('name', 'Name', 'Material node tree name'),
                        ('nodes_used', 'Nodes', 'Total number of used nodes'),
+                       ('max_texture_size', 'Texture Size', 'Maximum width or height of textures used'),
                    ])),
                    ('geometry_cache_sort_value', bpy.props.EnumProperty(items=[
                        ('name', 'Name', 'Geometry node tree name'),

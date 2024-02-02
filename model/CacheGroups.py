@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Spencer Magnusson
+# Copyright (C) 2024 Spencer Magnusson
 # semagnum@gmail.com
 # Created by Spencer Magnusson
 #     This program is free software: you can redistribute it and/or modify
@@ -46,3 +46,5 @@ class NodeCache(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty(name="Node Name", default="")
 
     nodes_used: bpy.props.IntProperty(default=0)
+
+    max_texture_size: bpy.props.IntProperty(default=0)
