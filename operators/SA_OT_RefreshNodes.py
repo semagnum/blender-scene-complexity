@@ -53,7 +53,7 @@ def get_max_texture(curr_node: bpy.types.Node) -> int:
 
     if not curr_node.mute:
         if hasattr(curr_node, 'node_tree'):
-            return max(*[
+            return max([
                 get_max_texture(output)
                 for output in get_output_nodes(curr_node.node_tree)
             ])
