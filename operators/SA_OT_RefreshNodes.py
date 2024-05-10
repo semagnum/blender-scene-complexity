@@ -84,6 +84,8 @@ class SA_OT_RefreshNodes(bpy.types.Operator):
     def execute(self, context):
         window_manager = context.window_manager
         window_manager.sa_material_cache.clear()
+
+        failed_node_trees = []
         for material in bpy.data.materials:
             if material.use_nodes:
                 node_tree = material.node_tree
@@ -98,7 +100,9 @@ class SA_OT_RefreshNodes(bpy.types.Operator):
                     new_material_cache.nodes_used = len(total_nodes.keys())
                     new_material_cache.max_texture_size = texture_size
                 except Exception as e:
-                    print('Adding material to cache failed', material.name, e)
+                    failed_node_trees.append(
+                        (material.name, str(e))
+                    )
 
         window_manager.sa_geometry_cache.clear()
         geo_node_trees = (node_tree for node_tree in bpy.data.node_groups if node_tree.bl_idname == 'GeometryNodeTree')
@@ -111,5 +115,14 @@ class SA_OT_RefreshNodes(bpy.types.Operator):
                 new_data.name = geometry_node_tree.name
                 new_data.nodes_used = len(total_nodes.keys())
             except Exception as e:
-                print('Adding geometry nodes to cache failed', geometry_node_tree.name, e)
+                failed_node_trees.append(
+                    (geometry_node_tree.name, str(e))
+                )
+
+        if failed_node_trees:
+            self.report({'WARNING'}, 'Some node trees failed to update (see console)')
+            print(''.join([
+                '\n\t{} ({})'.format(tree_name, e)
+                for tree_name, e in failed_node_trees
+            ]))
         return {'FINISHED'}

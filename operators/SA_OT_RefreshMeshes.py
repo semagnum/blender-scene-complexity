@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Spencer Magnusson
+# Copyright (C) 2024 Spencer Magnusson
 # semagnum@gmail.com
 # Created by Spencer Magnusson
 #     This program is free software: you can redistribute it and/or modify
@@ -86,6 +86,7 @@ class SA_OT_RefreshMeshes(bpy.types.Operator):
 
         depsgraph = context.evaluated_depsgraph_get()
         use_bmesh = window_manager.sa_apply_modifiers
+        failed_meshes = []
         for o in all_mesh_objects:
             new_data: MeshObjectCache = window_manager.sa_mesh_cache.add()
             new_data.name = o.name_full
@@ -93,7 +94,7 @@ class SA_OT_RefreshMeshes(bpy.types.Operator):
             try:
                 new_data.faces, new_data.tris, new_data.verts = get_bmesh_data(o, depsgraph, use_bmesh)
             except Exception as e:
-                print('Uninitialized data for ' + new_data.name, e)
+                failed_meshes.append((o.name, str(e)))
 
             new_data.modifier_count = len(o.modifiers)
 
@@ -101,5 +102,12 @@ class SA_OT_RefreshMeshes(bpy.types.Operator):
             for m in uniq_material_names:
                 if m in material_cache_tree:
                     new_data.material_node_count += material_cache_tree[m]
+
+        if failed_meshes:
+            self.report({'WARNING'}, 'Some meshes failed to update (see console)')
+            print(''.join([
+                '\n\t{} ({})'.format(mesh_name, e)
+                for mesh_name, e in failed_meshes
+            ]))
 
         return {'FINISHED'}
