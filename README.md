@@ -1,3 +1,5 @@
+> Note: do not use releases - since the docs are now gone, you can just download as a zip directly.
+
 # Scene Complexity
 
 This Blender add-on analyzes data about geometry, materials, and node trees in your scene.
