@@ -149,7 +149,11 @@ class SA_UL_MaterialNodeComplexity(bpy.types.UIList):
                   index):
         layout.label(text=node_cache.name)
         layout.label(text=format_num(node_cache.nodes_used), icon='NODETREE')
-        layout.label(text=format_num(node_cache.max_texture_size, decimal_places=None), icon='TEXTURE_DATA')
+        layout.label(
+            text=format_num(node_cache.max_texture_size, decimal_places=None) +
+                 ("px" if node_cache.max_texture_size < 1000 else ""),
+            icon='TEXTURE_DATA'
+        )
 
     def filter_items(self, context, data, propname):
         all_nodes = getattr(data, propname)
