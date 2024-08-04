@@ -36,9 +36,9 @@ _register_props = (('sa_mesh_active', bpy.props.IntProperty(default=0, options={
                        ('name', 'Name', 'Mesh object name'),
                        ('tris', 'Triangles', 'Calculated triangle count'),
                        ('verts', 'Vertices', 'Vertex count'),
-                       ('modifier_count', 'Modifiers', 'number of modifiers on meshobject'),
-                       ('material_count', 'Materials', 'Number of materials on object'),
-                       ('material_node_count', 'Nodes', 'total number of shader nodes used on object'),
+                       ('modifier_count', 'Modifiers', 'Total number of modifiers on object'),
+                       ('material_count', 'Material', 'Total number of material slots used on object'),
+                       ('material_node_count', 'Nodes', 'Total number of shader nodes used on object'),
                    ])),
                    ('collection_cache_sort_value', bpy.props.EnumProperty(items=[
                        ('name', 'Name', 'Collection name'),
@@ -47,13 +47,13 @@ _register_props = (('sa_mesh_active', bpy.props.IntProperty(default=0, options={
                        ('instance_count', 'Instances', 'Number of instances of this collection'),
                    ])),
                    ('material_cache_sort_value', bpy.props.EnumProperty(items=[
-                       ('name', 'Name', 'Material node tree name'),
-                       ('nodes_used', 'Nodes', 'Total number of used nodes'),
-                       ('max_texture_size', 'Texture Size', 'Maximum width or height of textures used'),
+                       ('name', 'Name', 'Node tree name'),
+                       ('nodes_used', 'Nodes', 'Total number of nodes used'),
+                       ('max_texture_size', 'Texture Size', 'Maximum width or height of textures used within material'),
                    ])),
                    ('geometry_cache_sort_value', bpy.props.EnumProperty(items=[
-                       ('name', 'Name', 'Geometry node tree name'),
-                       ('nodes_used', 'Nodes', 'Total number of used nodes'),
+                       ('name', 'Name', 'Node tree name'),
+                       ('nodes_used', 'Nodes', 'Total number of nodes used'),
                    ])),
                    )
 

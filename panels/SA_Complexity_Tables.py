@@ -42,7 +42,7 @@ class SA_PT_ComplexityTable(bpy.types.Panel):
 
         layout.prop(wm, 'sa_apply_modifiers')
 
-        layout.label(text='Mesh objects')
+        layout.label(text='Mesh Objects')
         layout.prop(wm, 'mesh_cache_sort_value', expand=True)
         layout.template_list('SA_UL_MeshComplexity', '', wm, 'sa_mesh_cache', wm, 'sa_mesh_active', columns=6)
 
@@ -51,12 +51,12 @@ class SA_PT_ComplexityTable(bpy.types.Panel):
         layout.template_list('SA_UL_CollectionComplexity', '', wm, 'sa_collection_cache', wm,
                              'sa_collection_active', columns=4)
 
-        layout.label(text='Shader nodes')
+        layout.label(text='Material Nodes')
         layout.prop(wm, 'material_cache_sort_value', expand=True)
         layout.template_list('SA_UL_MaterialNodeComplexity', '', wm, 'sa_material_cache',
                              wm, 'sa_material_active', columns=2)
 
-        layout.label(text='Geometry nodes')
+        layout.label(text='Geometry Nodes')
         layout.prop(wm, 'geometry_cache_sort_value', expand=True)
         layout.template_list('SA_UL_GeometryNodeComplexity', '', wm, 'sa_geometry_cache',
                              wm, 'sa_geometry_active', columns=2)
