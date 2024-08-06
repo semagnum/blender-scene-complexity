@@ -16,7 +16,6 @@
 from typing import Iterator
 
 import bpy
-import bmesh
 
 from ..model.CacheGroups import MeshObjectCache
 
@@ -42,32 +41,20 @@ def get_parent_ancestors(obj: bpy.types.Object) -> list[bpy.types.Object]:
     return parents
 
 
-def get_bmesh_data(obj: bpy.types.Object, depsgraph: bpy.types.Depsgraph, use_bmesh: bool = True) -> tuple[int]:
+def get_bmesh_data(obj: bpy.types.Object, depsgraph: bpy.types.Depsgraph, use_bmesh: bool = True) -> tuple[int, int]:
     """Gets bmesh stats for object.
 
     :param obj: mesh object
     :param depsgraph: current scene depsgraph.
     :param use_bmesh: whether to use evaluated bmesh or simplified stats.
-    :return: Tuple containing the evaluated ``(face_count, triangle_count, vertex_count)`` of the mesh object.
+    :return: Tuple containing the evaluated ``(triangle_count, vertex_count)`` of the mesh object.
     """
     if not use_bmesh:
-        face_count = len(obj.data.polygons)
-        verts_count = len(obj.data.vertices)
-        tris_count = sum(len(face.vertices) - 2 for face in obj.data.polygons)
+        data = obj.data
     else:
-        blender_mesh = obj.evaluated_get(depsgraph).to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
+        data = obj.evaluated_get(depsgraph).data
 
-        bm = bmesh.new()
-        bm.from_mesh(blender_mesh)
-        bm.faces.ensure_lookup_table()
-
-        face_count = len(bm.faces)
-        tris_count = len(bm.calc_loop_triangles())
-        verts_count = len(bm.verts)
-
-        bm.free()
-
-    return face_count, tris_count, verts_count
+    return sum([len(face.vertices) - 2 for face in data.polygons]), len(data.vertices)
 
 
 class SA_OT_RefreshMeshes(bpy.types.Operator):
@@ -81,7 +68,7 @@ class SA_OT_RefreshMeshes(bpy.types.Operator):
         window_manager = context.window_manager
         window_manager.sa_mesh_cache.clear()
         root_collection = context.view_layer.layer_collection.collection
-        all_mesh_objects = {o for o in root_collection.all_objects if o.type == 'MESH'}
+        all_mesh_objects = [o for o in root_collection.all_objects if o.type == 'MESH']
         material_cache_tree = {m.name: m.nodes_used for m in window_manager.sa_material_cache}
 
         depsgraph = context.evaluated_depsgraph_get()
@@ -92,16 +79,18 @@ class SA_OT_RefreshMeshes(bpy.types.Operator):
             new_data.name = o.name_full
             new_data.material_count = len({m.material.name_full for m in o.material_slots if m.material is not None})
             try:
-                new_data.faces, new_data.tris, new_data.verts = get_bmesh_data(o, depsgraph, use_bmesh)
+                new_data.tris, new_data.verts = get_bmesh_data(o, depsgraph, use_bmesh)
             except Exception as e:
                 failed_meshes.append((o.name, str(e)))
 
             new_data.modifier_count = len(o.modifiers)
 
-            uniq_material_names = {m.material.name for m in o.material_slots if m.material is not None}
-            for m in uniq_material_names:
-                if m in material_cache_tree:
-                    new_data.material_node_count += material_cache_tree[m]
+            new_data.material_count = sum([
+                material_cache_tree[m.material.name]
+                for m in o.material_slots
+                if m.material is not None and
+                m.material.name in material_cache_tree
+            ])
 
         if failed_meshes:
             self.report({'WARNING'}, 'Some meshes failed to update (see console)')

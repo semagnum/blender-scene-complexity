@@ -1,4 +1,4 @@
-# Copyright (C) 2023 Spencer Magnusson
+# Copyright (C) 2024 Spencer Magnusson
 # semagnum@gmail.com
 # Created by Spencer Magnusson
 #     This program is free software: you can redistribute it and/or modify
@@ -83,11 +83,10 @@ class SA_OT_RefreshCollections(bpy.types.Operator):
             new_coll_data: CollectionCache = window_manager.sa_collection_cache.add()
             new_coll_data.name = coll.collection.name
             new_coll_data.is_visible = coll.is_visible
-            for o in coll.collection.objects:
-                if o.name in mesh_cache:
-                    tris, verts = mesh_cache[o.name]
-                    new_coll_data.total_tris += tris
-                    new_coll_data.total_verts += verts
+
+            mesh_children = [mesh_cache[o.name] for o in coll.collection.objects if o.name in mesh_cache]
+            new_coll_data.total_tris = sum([v[0] for v in mesh_children])
+            new_coll_data.total_verts = sum([v[1] for v in mesh_children])
             new_coll_data.instance_count = len([c for c in instanced_colls if c == coll.collection.name])
 
         return {'FINISHED'}

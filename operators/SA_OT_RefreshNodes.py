@@ -25,48 +25,37 @@ Should only be non-operational nodes or otherwise not actually affecting the com
 """
 
 
-def get_nodes_used(curr_node: bpy.types.Node) -> dict[str, bpy.types.Node]:
+def get_nodes_used(curr_node: bpy.types.Node, node_group_cache: dict[str, set[bpy.types.Node]], image_cache: set[bpy.types.Image]) -> set[bpy.types.Node]:
     """Get all nodes currently used within a node tree.
 
     :param curr_node: node to start with.
     """
-    curr_dict = {}
+    node_set = set()
     if not curr_node.mute:
         if hasattr(curr_node, 'node_tree'):
-            for output in get_output_nodes(curr_node.node_tree):
-                curr_dict.update(get_nodes_used(output))
+            node_group_name = curr_node.node_tree.name
+            if node_group_name not in node_group_cache:
+                new_node_group_entry = set()
+                for output in get_output_nodes(curr_node.node_tree):
+                    new_node_group_entry.update(get_nodes_used(output, node_group_cache, image_cache))
+                node_group_cache[node_group_name] = new_node_group_entry
+
+            node_set.update(node_group_cache[curr_node.node_tree.name])
         elif not any(p in curr_node.bl_idname for p in NODE_PATTERNS_TO_SKIP):
-            curr_dict[curr_node.id_data.name + curr_node.bl_idname] = curr_node
+            node_set.add(curr_node)
 
-    for node_input in curr_node.inputs:
-        if node_input.is_linked:
-            for link in node_input.links:
-                curr_dict.update(get_nodes_used(link.from_node))
-    return curr_dict
+            if curr_node.type == 'TEX_IMAGE' and hasattr(curr_node.image, 'size'):
+                image_cache.add(curr_node.image)
 
-
-def get_max_texture(curr_node: bpy.types.Node) -> int:
-    """Get texture node image's size with most pixels.
-
-    :param curr_node: node to start with.
-    """
-
-    if not curr_node.mute:
-        if hasattr(curr_node, 'node_tree'):
-            return max([
-                get_max_texture(output)
-                for output in get_output_nodes(curr_node.node_tree)
-            ])
-        elif curr_node.type == 'TEX_IMAGE':
-            return max(curr_node.image.size[0], curr_node.image.size[1])
-
-    texture_size = 0
-    for node_input in curr_node.inputs:
-        if node_input.is_linked:
-            for link in node_input.links:
-                texture_size = max(texture_size, get_max_texture(link.from_node))
-
-    return texture_size
+    nodes_from_inputs = [
+        get_nodes_used(link.from_node, node_group_cache, image_cache)
+        for node_input in curr_node.inputs
+        for link in node_input.links
+        if node_input.is_linked
+    ]
+    for n in nodes_from_inputs:
+        node_set.update(n)
+    return node_set
 
 
 def get_output_nodes(node_tree: bpy.types.NodeTree) -> Iterator[bpy.types.Node]:
@@ -85,39 +74,43 @@ class SA_OT_RefreshNodes(bpy.types.Operator):
         window_manager = context.window_manager
         window_manager.sa_material_cache.clear()
 
+        materials = {
+            material_slot.material
+            for object in context.scene.objects
+            for material_slot in object.material_slots
+            if material_slot.material and material_slot.material.use_nodes
+        }
+
         failed_node_trees = []
-        for material in bpy.data.materials:
-            if material.use_nodes:
-                node_tree = material.node_tree
-                try:
-                    total_nodes = {}
-                    texture_size = 0
-                    for output in get_output_nodes(node_tree):
-                        total_nodes.update(get_nodes_used(output))
-                        texture_size = max(texture_size, get_max_texture(output))
-                    new_material_cache: NodeCache = window_manager.sa_material_cache.add()
-                    new_material_cache.name = material.name
-                    new_material_cache.nodes_used = len(total_nodes.keys())
-                    new_material_cache.max_texture_size = texture_size
-                except Exception as e:
-                    failed_node_trees.append(
-                        (material.name, str(e))
-                    )
+        node_group_cache = dict()
+        for material in materials:
+            node_tree = material.node_tree
+            total_nodes = set()
+            image_cache = set()
+            for output in get_output_nodes(node_tree):
+                total_nodes.update(get_nodes_used(output, node_group_cache, image_cache))
+
+            texture_size = max(
+                [
+                    max(image.size)
+                    for image in image_cache
+                ],
+                default=0
+            )
+            new_material_cache: NodeCache = window_manager.sa_material_cache.add()
+            new_material_cache.name = material.name
+            new_material_cache.nodes_used = len(total_nodes)
+            new_material_cache.max_texture_size = texture_size
 
         window_manager.sa_geometry_cache.clear()
         geo_node_trees = (node_tree for node_tree in bpy.data.node_groups if node_tree.bl_idname == 'GeometryNodeTree')
         for geometry_node_tree in geo_node_trees:
-            try:
-                total_nodes = {}
-                for output in get_output_nodes(geometry_node_tree):
-                    total_nodes.update(get_nodes_used(output))
-                new_data: NodeCache = window_manager.sa_geometry_cache.add()
-                new_data.name = geometry_node_tree.name
-                new_data.nodes_used = len(total_nodes.keys())
-            except Exception as e:
-                failed_node_trees.append(
-                    (geometry_node_tree.name, str(e))
-                )
+            total_nodes = set()
+            for output in get_output_nodes(geometry_node_tree):
+                total_nodes.update(get_nodes_used(output, node_group_cache, set()))
+            new_data: NodeCache = window_manager.sa_geometry_cache.add()
+            new_data.name = geometry_node_tree.name
+            new_data.nodes_used = len(total_nodes)
 
         if failed_node_trees:
             self.report({'WARNING'}, 'Some node trees failed to update (see console)')
