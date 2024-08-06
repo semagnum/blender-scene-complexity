@@ -58,7 +58,6 @@ class SA_UL_MeshComplexity(bpy.types.UIList):
 
         # Default return values.
         flt_flags = []
-        flt_neworder = []
 
         # Filtering by name
         if self.filter_name:
@@ -67,7 +66,7 @@ class SA_UL_MeshComplexity(bpy.types.UIList):
 
         if not flt_flags:
             if self.is_visible or self.is_selected:
-                flt_flags = [0 if (self.is_visible and obj_data[idx].hide_get()) or (
+                flt_flags = [0 if (self.is_visible and not obj_data[idx].visible_get()) or (
                             self.is_selected and not obj_data[idx].select_get()) else self.bitflag_filter_item for
                              idx, coll in enumerate(all_mesh_objects)]
             else:

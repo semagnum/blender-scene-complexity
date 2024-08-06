@@ -3,7 +3,7 @@ schema_version = "1.0.0"
 # Example of manifest file for a Blender extension
 # Change the values according to your extension
 id = "scenecomplexity"
-version = "0.0.7"
+version = "0.0.8"
 name = "Scene Complexity"
 tagline = "Analyze various aspects of scenes to determine complexity"
 maintainer = "Spencer Magnusson <semagnum+blenderextensions@gmail.com>"
