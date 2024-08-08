@@ -16,13 +16,10 @@
 import bpy
 
 from ..operators.SA_OT_RefreshAll import SA_OT_RefreshAll
-from ..operators.SA_OT_RefreshCollections import SA_OT_RefreshCollections
-from ..operators.SA_OT_RefreshMeshes import SA_OT_RefreshMeshes
-from ..operators.SA_OT_RefreshNodes import SA_OT_RefreshNodes
 
 
 class SA_PT_ComplexityTable(bpy.types.Panel):
-    "Scene properties panel to show scene and file complexity."
+    """Scene properties panel to show scene and file complexity."""
     bl_label = 'Scene Analyzer'
     bl_category = 'Scene Analyzer'
     bl_space_type = 'PROPERTIES'
@@ -32,13 +29,7 @@ class SA_PT_ComplexityTable(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         wm = context.window_manager
-
-        col = layout.column(align=True)
-        col.operator(SA_OT_RefreshAll.bl_idname, icon='FILE_REFRESH')
-        row = col.row()
-        row.operator(SA_OT_RefreshMeshes.bl_idname, icon='MESH_DATA')
-        row.operator(SA_OT_RefreshCollections.bl_idname, icon='OUTLINER_COLLECTION')
-        row.operator(SA_OT_RefreshNodes.bl_idname, icon='NODETREE')
+        layout.operator(SA_OT_RefreshAll.bl_idname, icon='FILE_REFRESH')
 
         layout.prop(wm, 'sa_apply_modifiers')
 
@@ -59,4 +50,4 @@ class SA_PT_ComplexityTable(bpy.types.Panel):
         layout.label(text='Geometry Nodes')
         layout.prop(wm, 'geometry_cache_sort_value', expand=True)
         layout.template_list('SA_UL_GeometryNodeComplexity', '', wm, 'sa_geometry_cache',
-                             wm, 'sa_geometry_active', columns=2)
+                             wm, 'sa_geometry_active', columns=2, rows=3)

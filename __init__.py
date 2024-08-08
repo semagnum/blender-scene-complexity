@@ -53,7 +53,7 @@ from . import model, operators, panels
 bl_info = {
     "name": 'Scene Complexity',
     "author": 'Spencer Magnusson',
-    "version": (0, 0, 9),
+    "version": (0, 0, 10),
     "blender": (2, 93, 0),
     "description": 'Analyze various aspects of scene to determine complexity',
     "location": 'Properties -> Scene',
